@@ -54,9 +54,9 @@ class ViewController: UIViewController, WKNavigationDelegate {
         for website in websites {
             ac.addAction(UIAlertAction(title: website, style: .default, handler: openPage))
         }
-                
-        ac.addAction(UIAlertAction(title: "Cencel", style: .cancel, handler: openPage))
-
+        
+        ac.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: openPage))
+        
         ac.popoverPresentationController?.barButtonItem = navigationItem.rightBarButtonItem
         
         present(ac, animated: true)
@@ -91,6 +91,14 @@ class ViewController: UIViewController, WKNavigationDelegate {
         }
         
         decisionHandler(.cancel)
+        
+        let dialogMessage = UIAlertController(title: "Oops!", message: "This site is blocked.", preferredStyle: .alert)
+        let ok = UIAlertAction(title: "OK", style: .default, handler: { (action) -> Void in
+            self.navigationController?.popViewController(animated: true)
+        })
+        dialogMessage.addAction(ok)
+        present(dialogMessage, animated: true, completion: nil)
+        
     }
 }
 
