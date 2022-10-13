@@ -37,11 +37,39 @@ class ViewController: UIViewController, WKNavigationDelegate {
         progressView.sizeToFit()
         let progressButton = UIBarButtonItem(customView: progressView)
         
-        toolbarItems = [progressButton, spacer, refresh]
+        lazy var backButton: UIButton = {
+            let element = UIButton()
+            element.translatesAutoresizingMaskIntoConstraints = false
+            element.setImage(UIImage(systemName: "chevron.backward"), for: .normal)
+            element.addTarget(webView, action: #selector(webView.goBack), for: .touchDown)
+            element.isUserInteractionEnabled = true
+            element.configuration = .plain()
+            return element
+        }()
+        
+        let backButtonItem = UIBarButtonItem(customView: backButton)
+        backButtonItem.target = webView
+        
+
+        lazy var forwardButton: UIButton = {
+            let element = UIButton()
+            element.translatesAutoresizingMaskIntoConstraints = false
+            element.setImage(UIImage(systemName: "chevron.forward"), for: .normal)
+            element.addTarget(webView, action: #selector(webView.goForward), for: .touchDown)
+            element.isUserInteractionEnabled = true
+            element.configuration = .plain()
+            element.tintColor = UIColor(named: "Black")
+            return element
+        }()
+        
+        let forwardButtonItem = UIBarButtonItem(customView: forwardButton)
+        
+        toolbarItems = [backButtonItem, forwardButtonItem, progressButton, spacer, refresh]
         
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
-    }
 
+    }
+    
     func setupURLToWebView() {
         let url = URL(string: "https://" + websites[0])!
         webView.load(URLRequest(url: url))
