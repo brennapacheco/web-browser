@@ -8,22 +8,20 @@
 import UIKit
 import WebKit
 
-class ViewController: UIViewController, WKNavigationDelegate {
+class ViewController: UITableViewController, WKNavigationDelegate {
     
     var webView: WKWebView!
     var progressView: UIProgressView!
     var websites = ["apple.com", "hackingwithswift.com"]
-    
-    override func loadView() {
-        webView = WKWebView()
-        webView.navigationDelegate = self
-        view = webView
-    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupView()
-        setupURLToWebView()
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        webView = WKWebView()
+        webView.navigationDelegate = self
+        view = webView
     }
     
     func setupView() {
@@ -68,12 +66,6 @@ class ViewController: UIViewController, WKNavigationDelegate {
         
         webView.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
 
-    }
-    
-    func setupURLToWebView() {
-        let url = URL(string: "https://" + websites[0])!
-        webView.load(URLRequest(url: url))
-        webView.allowsBackForwardNavigationGestures = true
     }
     
     @objc func openTapped() {
@@ -128,5 +120,22 @@ class ViewController: UIViewController, WKNavigationDelegate {
         present(dialogMessage, animated: true, completion: nil)
         
     }
+    
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return websites.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "Websites", for: indexPath)
+        cell.textLabel?.text = websites[indexPath.row]
+        return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let url = URL(string: "https://" + websites[indexPath.row]) else { return }
+        viewWillDisappear(true)
+        webView.load(URLRequest(url: url))
+        webView.allowsBackForwardNavigationGestures = true
+        setupView()
+    }
 }
-
